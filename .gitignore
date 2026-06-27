@@ -1,6 +1,11 @@
 vendor/
 portal/log
 portal/tmp
+webapp/log/*
+!webapp/log/.keep
+!webapp/log/nginx/
+webapp/log/nginx/*
+!webapp/log/nginx/.keep
 
 ### Portal
 # Ignore bundler config.
