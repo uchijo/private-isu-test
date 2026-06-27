@@ -1,0 +1,6 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::content})}">
+<th:block th:fragment="content">
+<th:block th:replace="~{post :: post(${post})}"></th:block>
+</th:block>
+</html>

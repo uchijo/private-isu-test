@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:fragment="layout(content)">
+  <head>
+    <meta charset="utf-8">
+    <title>Iscogram</title>
+    <link href="/css/style.css" media="screen" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <div class="isu-title">
+          <h1><a href="/">Iscogram</a></h1>
+        </div>
+        <div class="isu-header-menu">
+          <th:block th:if="${me.id == 0}">
+          <div><a href="/login">ログイン</a></div>
+          </th:block>
+          <th:block th:unless="${me.id == 0}">
+          <div><a th:href="@{'/@' + ${me.accountName}}"><span class="isu-account-name" th:text="${me.accountName}"></span>さん</a></div>
+          <div th:if="${me.authority == 1}"><a href="/admin/banned">管理者用ページ</a></div>
+          <div><a href="/logout">ログアウト</a></div>
+          </th:block>
+        </div>
+      </div>
+
+      <th:block th:replace="${content}"></th:block>
+    </div>
+    <script src="/js/timeago.min.js"></script>
+    <script src="/js/main.js"></script>
+  </body>
+</html>
