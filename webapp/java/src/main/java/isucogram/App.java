@@ -1,13 +1,9 @@
 package isucogram;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
-import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -28,20 +24,15 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,72 +40,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @SpringBootApplication
 public class App {
     public static void main(String[] args) {
         SpringApplication.run(App.class, args);
-    }
-}
-
-@Configuration
-class StaticFiles implements WebMvcConfigurer {
-    @Value("${isuconp.public-dir:/home/public/}")
-    private String publicDir;
-
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/css/**", "/js/**", "/img/**", "/favicon.ico")
-                .addResourceLocations("file:" + withTrailingSlash(publicDir), "file:" + withTrailingSlash(System.getProperty("user.dir")) + "../public/");
-    }
-
-    private String withTrailingSlash(String path) {
-        return path.endsWith("/") ? path : path + "/";
-    }
-}
-
-@Controller
-class StaticFileController {
-    private final Path publicRoot;
-    private final Path localPublicRoot;
-
-    StaticFileController(@Value("${isuconp.public-dir:/home/public/}") String publicDir) {
-        this.publicRoot = Path.of(publicDir).toAbsolutePath().normalize();
-        this.localPublicRoot = Path.of(System.getProperty("user.dir")).resolve("../public").toAbsolutePath().normalize();
-    }
-
-    @GetMapping({"/css/{fileName:.+}", "/js/{fileName:.+}", "/img/{fileName:.+}", "/favicon.ico"})
-    ResponseEntity<Resource> staticFile(HttpServletRequest request, @PathVariable(required = false) String fileName) throws IOException {
-        String requestPath = request.getRequestURI();
-        Path relative = Path.of(requestPath.startsWith("/") ? requestPath.substring(1) : requestPath).normalize();
-        Path file = resolveStaticFile(publicRoot, relative);
-        if (file == null) {
-            file = resolveStaticFile(localPublicRoot, relative);
-        }
-        if (file == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        String contentType = Files.probeContentType(file);
-        if (contentType == null) {
-            contentType = URLConnection.guessContentTypeFromName(file.getFileName().toString());
-        }
-        if (contentType == null) {
-            contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
-        }
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_TYPE, contentType)
-                .body(new FileSystemResource(file));
-    }
-
-    private Path resolveStaticFile(Path root, Path relative) {
-        Path file = root.resolve(relative).normalize();
-        if (!file.startsWith(root) || !Files.isRegularFile(file)) {
-            return null;
-        }
-        return file;
     }
 }
 

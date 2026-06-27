@@ -1,4 +1,4 @@
-<div xmlns:th="http://www.thymeleaf.org" th:fragment="post(post)" class="isu-post" th:id="'pid_' + ${post.id}" th:data-created-at="${post.createdAtIso}">
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="post" class="isu-post" th:id="'pid_' + ${post.id}" th:data-created-at="${post.createdAtIso}">
   <div class="isu-post-header">
     <a th:href="@{'/@' + ${post.user.accountName} + ' '}" class="isu-post-account-name" th:text="${post.user.accountName}"></a>
     <a th:href="@{'/posts/' + ${post.id}}" class="isu-post-permalink">

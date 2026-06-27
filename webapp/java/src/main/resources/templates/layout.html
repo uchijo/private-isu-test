@@ -12,10 +12,10 @@
           <h1><a href="/">Iscogram</a></h1>
         </div>
         <div class="isu-header-menu">
-          <th:block th:if="${me.id == 0}">
+          <th:block th:if="${me == null or me.id == 0}">
           <div><a href="/login">ログイン</a></div>
           </th:block>
-          <th:block th:unless="${me.id == 0}">
+          <th:block th:unless="${me == null or me.id == 0}">
           <div><a th:href="@{'/@' + ${me.accountName}}"><span class="isu-account-name" th:text="${me.accountName}"></span>さん</a></div>
           <div th:if="${me.authority == 1}"><a href="/admin/banned">管理者用ページ</a></div>
           <div><a href="/logout">ログアウト</a></div>
